@@ -1,0 +1,44 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "force_deregister": true,
+    "force_delete_snapshot": true,
+    "region": "us-east-2",
+    "ami_groups": ["all"],
+    "ami_regions": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-central-1"
+    ],
+    "source_ami_filter": {
+        "filters": {
+            "virtualization-type": "hvm",
+            "name": "*ubuntu-xenial-16.04-amd64-server-*",
+            "root-device-type": "ebs"
+        },
+        "owners": ["099720109477"],
+        "most_recent": true
+    },
+    "instance_type": "p2.xlarge",
+    "ssh_username": "ubuntu",
+    "ami_name": "k8s-1.6-gpu-ubuntu-xenial-amd64-hvm-ebs",
+    "ami_description": "https://github.com/pureclouds/k8s-ami",
+    "tags": {
+        "Name": "Kubernetes 1.6 node with GPU support"
+    }
+  }],
+  "provisioners": [{
+      "type": "shell",
+      "script": "k8s-1.6-gpu-xenial-init.sh"
+  }]
+}
